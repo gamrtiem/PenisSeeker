@@ -9,6 +9,7 @@ using System.Security.Permissions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
+using BepInEx;
 
 [module: UnverifiableCode]
 #pragma warning disable CS0618 // Type or member is obsolete
