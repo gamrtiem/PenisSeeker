@@ -66,10 +66,10 @@ namespace PenisSeeker
         public float paddingBetweenAttacks = 0.3f;
 
         [SerializeField]
-        public string attackSoundString;
+        public string attackSoundString = "Play_seeker_skill1_fire";
 
         [SerializeField]
-        public string attackSoundStringAlt;
+        public string attackSoundStringAlt = "Play_seeker_skill1_fire_orb";
 
         [SerializeField]
         public float attackSoundPitch;
@@ -146,17 +146,27 @@ namespace PenisSeeker
             PlayCrossfade("Gesture, Additive", animationStateName, "FireGauntlet.playbackRate", duration, 0.025f);
             PlayCrossfade("Gesture, Override", animationStateName, "FireGauntlet.playbackRate", duration, 0.025f);
 
-            int chakras = characterBody.GetBuffCount(DLC2Content.Buffs.ChakraBuff);
-            var simplefuckingprojectile = plugin.exampleProjectilePrefab.GetComponent<ProjectileSimple>();
-            if (simplefuckingprojectile)
-            {
-                simplefuckingprojectile.updateAfterFiring = characterBody.GetBuffCount(DLC2Content.Buffs.ChakraBuff) > 3;
-                simplefuckingprojectile.desiredForwardSpeed = 15f;
-                simplefuckingprojectile.enableVelocityOverLifetime = true;
-                simplefuckingprojectile.velocityOverLifetime = AnimationCurve.Linear(1, 1, 2, 1 * chakras * 15);
+            // IVE HANDLED THE BELOW CODE IN THEIR PROPER PLACES!!!
+            // A lot of code below was modifying the prefab directly based on user statistics which is no bueno.
+            // Code that relied on user statistics like how much Chakra buff they had has been moved to a seperate MonoBehavior.
+            // Code that DOESNT rely on user statistics has been re-integrated into the prefab creation, as it's redundant to set it here.
+            // P.S a LOT of the serialized fields should be cleaned up on re-write...
+
+            //int chakras = characterBody.GetBuffCount(DLC2Content.Buffs.ChakraBuff);
+            //var simplefuckingprojectile = plugin.exampleProjectilePrefab.GetComponent<ProjectileSimple>();
+            //if (simplefuckingprojectile)
+            //{
+                // YOU ARE UPDATING THE ENTIRE PREFAB INSTEAD OF JUST THE INSTANCE HERE...
+                // THIS IS NOT IDEAL... LIKELY TO CAUSE DESYNC IN MULTIPLAYER?
+                // DONT DO THIS!
+
+                //simplefuckingprojectile.updateAfterFiring = characterBody.GetBuffCount(DLC2Content.Buffs.ChakraBuff) > 3;
+                //simplefuckingprojectile.desiredForwardSpeed = 15f;
+                //simplefuckingprojectile.enableVelocityOverLifetime = true;
+                //simplefuckingprojectile.velocityOverLifetime = AnimationCurve.Linear(1, 1, 2, 1 * chakras * 15);
                 // Controls the projectile velocity overlifetime. First number is frame, second is starting velocity, third is how long it exists for, fourth is ending velocity
                 //this shit is probably wrong btw ^^^ but idc just change the numbers and see
-                simplefuckingprojectile.oscillateMagnitude = 1000f;
+                //simplefuckingprojectile.oscillateMagnitude = 1000f;
                 //Controll how gay the prsojectile is
 
 
@@ -169,7 +179,7 @@ namespace PenisSeeker
                 //NEEDS to be multiplied (*) ig? numbers may change lmao
                 // WRONG SOMETHING IS WRONG GAAHH
 
-            }
+            //}
         }
 
 
@@ -210,6 +220,7 @@ namespace PenisSeeker
                     ProjectileManager.instance.FireProjectile(fireProjectileInfo);
                 }
                 AddRecoil(0.2f * recoilAmplitude, 0.1f * recoilAmplitude, -1f * recoilAmplitude, 1f * recoilAmplitude);
+                ///////////////////////////////////////////////////
             }
         }
 
