@@ -91,8 +91,12 @@ namespace PenisSeeker
 
             
             var targetcuck = exampleProjectilePrefab.AddComponent<ProjectileTargetComponent>();
-            
 
+            var simplefuckingprojectile = exampleProjectilePrefab.GetComponent<ProjectileSimple>();
+
+            simplefuckingprojectile.desiredForwardSpeed = 15f;
+            simplefuckingprojectile.enableVelocityOverLifetime = true;
+            simplefuckingprojectile.oscillateMagnitude = 1000f;
 
             var homingpiss = exampleProjectilePrefab.AddComponent<ProjectileDirectionalTargetFinder>();
                 homingpiss.lookRange = 35;
@@ -111,7 +115,7 @@ namespace PenisSeeker
                 sterpiss.rotationSpeed = 135;
                 sterpiss.yAxisOnly = false;
 
-                
+                exampleProjectilePrefab.AddComponent<PenisSeekerModifier>(); // ACANTHI CODE :3
 
                 PrefabAPI.RegisterNetworkPrefab(exampleProjectilePrefab);
                 ContentAddition.AddProjectile(exampleProjectilePrefab);
@@ -133,5 +137,47 @@ namespace PenisSeeker
             //folders.Add(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(base.Info.Location), LanguageFolder));
             //}
             //slur
+    }
+
+    public class PenisSeekerModifier : MonoBehaviour {
+
+        // This class handles runtime instanced modification of fired penis balls, allowing you to set variables
+        // of the penis blast when fired.
+
+        public void Start()
+        {
+            var projectileController = gameObject.GetComponent<ProjectileController>();
+
+            if (projectileController == null) {
+                Debug.Log("Help me twin. Help me.");
+                return;
+            }
+
+            if (projectileController.owner == null || projectileController.owner.GetComponent<CharacterBody>() == null) {
+                Debug.Log("Seekin' mah penits.");
+                return;
+            }
+
+            var projectileDirectionalTargetFinder = gameObject.GetComponent<ProjectileDirectionalTargetFinder>();
+            var projectileSteerTowardTarget = gameObject.GetComponent<ProjectileSteerTowardTarget>();
+            var projectileFuckingSimple = gameObject.GetComponent<ProjectileSimple>();
+            var chakras = projectileController.owner.GetComponent<CharacterBody>().GetBuffCount(DLC2Content.Buffs.ChakraBuff);
+
+            if (projectileDirectionalTargetFinder)
+            {
+                projectileDirectionalTargetFinder.lookRange = 20 + (3 * chakras); // 3, 6,
+                projectileDirectionalTargetFinder.lookCone = 7 + (2 * chakras);
+            }
+
+            if (projectileSteerTowardTarget)
+            {
+                projectileSteerTowardTarget.rotationSpeed = 20f * (float)chakras;
+            }
+
+            if (projectileFuckingSimple)
+            {
+                projectileFuckingSimple.velocityOverLifetime = AnimationCurve.Linear(1, 1, 2, 1 * chakras * 15);
+            }
+        }
     }
 }
