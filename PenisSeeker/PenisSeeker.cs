@@ -2,6 +2,7 @@ using BepInEx;
 using EntityStates;
 using R2API;
 using System;
+using System.Security.Permissions;
 using BepInEx.Bootstrap;
 using UnityEngine.AddressableAssets;
 using UnityEngine;
@@ -11,9 +12,9 @@ using RoR2.Projectile;
 
 namespace PenisSeeker
 {
-    [BepInDependency("com.cwmlolzlz.skills", BepInDependency.DependencyFlags.SoftDependency)] 
+    [BepInDependency("com.cwmlolzlz.skills", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
-    public class plugin : BaseUnityPlugin
+    public class PenisSeekerPlugin : BaseUnityPlugin
     {
         private const string PluginGUID = PluginAuthor + "toastyteam" + PluginName;
         private const string PluginAuthor = "toastyteam";
@@ -21,16 +22,18 @@ namespace PenisSeeker
         private const string PluginVersion = "1.2.2";
 
         public static GameObject seekerProjectilePrefab;
+        public static bool ROOInstalled = Chainloader.PluginInfos.ContainsKey("com.rune580.riskofoptions");
+        public static bool SPPInstalled = Chainloader.PluginInfos.ContainsKey("com.cwmlolzlz.skills");
 
         public void Awake()
         {
             Log.Init(Logger);
             Log.Debug("PENIS BLAST!!");
-            
+
             AssetBundle penisBundle = AssetBundle.LoadFromFile(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Info.Location), "penisblast"));
             GameObject SeekerBodyPrefab = Addressables.LoadAssetAsync<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_DLC2_Seeker.SeekerBody_prefab).WaitForCompletion();
             SkillDef PenisSeekerSkillDef = ScriptableObject.CreateInstance<SkillDef>();
-        
+
             PenisSeekerSkillDef.activationState = new SerializableEntityStateType(typeof(PENISBLAST));
             PenisSeekerSkillDef.activationStateMachineName = "Weapon";
             PenisSeekerSkillDef.baseMaxStock = 3;
@@ -45,6 +48,7 @@ namespace PenisSeeker
             PenisSeekerSkillDef.rechargeStock = 3;
             PenisSeekerSkillDef.requiredStock = 1;
             PenisSeekerSkillDef.stockToConsume = 1;
+            ((ScriptableObject)PenisSeekerSkillDef).name = "PENISBLAST"; // need this for skills plus plus to work !!
             
             // For the skill icon, you will have to load a Sprite from your own AssetBundle
             PenisSeekerSkillDef.icon = penisBundle.LoadAsset<Sprite>("appendageblast");
@@ -61,8 +65,8 @@ namespace PenisSeeker
             SkillFamily skillFamily = skillLocator.primary.skillFamily;
 
             // Cloned prefab, homing
-            seekerProjectilePrefab = Addressables.LoadAssetAsync<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_DLC2_Seeker.SpiritPunchFinisherProjectile_prefab).WaitForCompletion().InstantiateClone("ExampleProjectile");
-            
+            seekerProjectilePrefab = Addressables.LoadAssetAsync<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_DLC2_Seeker.SpiritPunchFinisherProjectile_prefab).WaitForCompletion().InstantiateClone("PenisSeekerProjectile");
+
             ProjectileTargetComponent targetcuck = seekerProjectilePrefab.AddComponent<ProjectileTargetComponent>();
 
             ProjectileSimple simplefuckingprojectile = seekerProjectilePrefab.GetComponent<ProjectileSimple>();
@@ -96,11 +100,35 @@ namespace PenisSeeker
                 skillDef = PenisSeekerSkillDef,
                 viewableNode = new ViewablesCatalog.Node(PenisSeekerSkillDef.skillNameToken, false)
             };
-            
-            if(Chainloader.PluginInfos.ContainsKey("com.cwmlolzlz.skills"))
+
+            if (SPPInstalled)
             {
                 SkillsPlusPlus.SkillModifierManager.LoadSkillModifiers();
             }
+            else
+            {
+                Log.Debug("sigh ,.,,. no skills plus plus ,..,.,,.,.,.,. its okay .,.,.,.,, i get it ,.,.,,.,.,., its fine .,.,.,.,");
+            }
+        }
+
+#if DEBUG
+        public void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.F8))
+            {
+                if (Chainloader.PluginInfos.ContainsKey("iDeathHD.UnityHotReload"))
+                {
+                    //for extra wins add a build event that copies it over to the install dir !!
+                    UnityHotReloadNS.UnityHotReload.LoadNewAssemblyVersion(
+                        typeof(PenisSeekerPlugin).Assembly, 
+                        System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Info.Location), "PenisSeeker.dll"));
+                }
+                else
+                {
+                    Log.Debug("couldnt finds unity hot reload !!");
+                }
+            }
         }
     }
+#endif  
 }

@@ -3,22 +3,30 @@ using RoR2;
 using RoR2.Projectile;
 using RoR2.Skills;
 using System;
+using System.Security;
+using System.Security.Permissions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
+
+[module: UnverifiableCode]
+#pragma warning disable CS0618 // Type or member is obsolete
+[assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
+#pragma warning restore CS0618 // Type or member is obsolete
 
 namespace PenisSeeker;
 
 public class PENISBLAST : BaseState, SteppedSkillDef.IStepSetter
 {
-    public GameObject projectileprefab = plugin.seekerProjectilePrefab;
+    
+    public GameObject projectileprefab = PenisSeekerPlugin.seekerProjectilePrefab;
     private GameObject muzzleflashEffectPrefab = Addressables.LoadAssetAsync<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_DLC2_Seeker.SpiritPunchMuzzleFlashVFX_prefab).WaitForCompletion();
     private Transform muzzleTransform;
     private Animator animator;
     private ChildLocator childLocator;
     private Gauntlet gauntlet;
     private float dmgBuffIncrease = 0.5f;
-    private float comboDamageCoefficient = 1;
+    public float comboDamageCoefficient = 1;
     private float baseDuration = 1;
     private float paddingBetweenAttacks = 0.3f;
     private string attackSoundString = "Play_seeker_skill1_fire";
@@ -95,7 +103,7 @@ public class PENISBLAST : BaseState, SteppedSkillDef.IStepSetter
             float damage = damageStat * (DamageCoefficient + extraDmgFromBuff);
             FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
             {
-                projectilePrefab = plugin.seekerProjectilePrefab,
+                projectilePrefab = PenisSeekerPlugin.seekerProjectilePrefab,
                 position = muzzleTransform.position,
                 rotation = Util.QuaternionSafeLookRotation(ray.direction),
                 owner = gameObject,
@@ -122,7 +130,7 @@ public class PENISBLAST : BaseState, SteppedSkillDef.IStepSetter
         if (gauntlet == Gauntlet.Explode && !hasFiredGauntlet)
         {
             Util.PlayAttackSpeedSound(attackSoundStringAlt, gameObject, attackSoundPitch);
-            projectileprefab = plugin.seekerProjectilePrefab;
+            projectileprefab = PenisSeekerPlugin.seekerProjectilePrefab;
             DamageCoefficient = comboDamageCoefficient;
             FireGauntlet();
             onSpiritOrbFired?.Invoke(true);
