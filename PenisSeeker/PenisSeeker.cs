@@ -2,6 +2,7 @@ using BepInEx;
 using EntityStates;
 using R2API;
 using System;
+using BepInEx.Bootstrap;
 using UnityEngine.AddressableAssets;
 using UnityEngine;
 using RoR2;
@@ -10,13 +11,14 @@ using RoR2.Projectile;
 
 namespace PenisSeeker
 {
+    [BepInDependency("com.cwmlolzlz.skills", BepInDependency.DependencyFlags.SoftDependency)] 
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     public class plugin : BaseUnityPlugin
     {
         private const string PluginGUID = PluginAuthor + "toastyteam" + PluginName;
         private const string PluginAuthor = "toastyteam";
         private const string PluginName = "PenisSeeker";
-        private const string PluginVersion = "1.0.6";
+        private const string PluginVersion = "1.2.2";
 
         public static GameObject seekerProjectilePrefab;
 
@@ -89,11 +91,16 @@ namespace PenisSeeker
             ContentAddition.AddProjectile(seekerProjectilePrefab);
 
             Array.Resize(ref skillFamily.variants, skillFamily.variants.Length + 1);
-            skillFamily.variants[skillFamily.variants.Length - 1] = new SkillFamily.Variant
+            skillFamily.variants[^1] = new SkillFamily.Variant
             {
                 skillDef = PenisSeekerSkillDef,
                 viewableNode = new ViewablesCatalog.Node(PenisSeekerSkillDef.skillNameToken, false)
             };
+            
+            if(Chainloader.PluginInfos.ContainsKey("com.cwmlolzlz.skills"))
+            {
+                SkillsPlusPlus.SkillModifierManager.LoadSkillModifiers();
+            }
         }
     }
 }
