@@ -18,11 +18,6 @@ public class PenisSeekerUpgrade
                 explode.blastRadius = AdditiveScaling(7, radiusScaling.Value, level);
             }
             base.OnSkillEnter(skillState, level);
-            
-            // skillState.projectileprefab.transform.localScale = new Vector3(
-            //     AdditiveScaling(1, 0.25f, level), 
-            //     AdditiveScaling(1, 0.25f, level),
-            //     AdditiveScaling(1, 0.25f, level));
         }
 
         public override void OnSkillLeveledUp(int level, CharacterBody characterBody, SkillDef skillDef)
