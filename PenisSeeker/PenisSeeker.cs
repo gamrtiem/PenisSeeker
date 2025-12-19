@@ -2,6 +2,9 @@ using BepInEx;
 using EntityStates;
 using R2API;
 using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Security;
 using System.Security.Permissions;
 using BepInEx.Bootstrap;
 using UnityEngine.AddressableAssets;
@@ -9,10 +12,25 @@ using UnityEngine;
 using RoR2;
 using RoR2.Skills;
 using RoR2.Projectile;
+using System;
+using System.Reflection;
+using BepInEx;
+using BepInEx.Bootstrap;
+using BepInEx.Configuration;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
+using MonoMod.RuntimeDetour.HookGen;
+using RoR2;
+using UnityEngine;
+
+[module: UnverifiableCode]
+[assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 
 namespace PenisSeeker
 {
     [BepInDependency("com.cwmlolzlz.skills", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("com.rune580.riskofoptions", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("iDeathHD.UnityHotReload", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     public class PenisSeekerPlugin : BaseUnityPlugin
     {
@@ -22,8 +40,8 @@ namespace PenisSeeker
         private const string PluginVersion = "1.2.2";
 
         public static GameObject seekerProjectilePrefab;
-        public static bool ROOInstalled = Chainloader.PluginInfos.ContainsKey("com.rune580.riskofoptions");
-        public static bool SPPInstalled = Chainloader.PluginInfos.ContainsKey("com.cwmlolzlz.skills");
+        public static bool SPPInstalled => Chainloader.PluginInfos.ContainsKey("com.cwmlolzlz.skills");
+        public static bool UHRInstalled => Chainloader.PluginInfos.ContainsKey("iDeathHD.UnityHotReload");
 
         public void Awake()
         {
@@ -103,7 +121,7 @@ namespace PenisSeeker
 
             if (SPPInstalled)
             {
-                SkillsPlusPlus.SkillModifierManager.LoadSkillModifiers();
+                SPPSupport.init();
             }
             else
             {
@@ -116,12 +134,10 @@ namespace PenisSeeker
         {
             if (Input.GetKeyUp(KeyCode.F8))
             {
-                if (Chainloader.PluginInfos.ContainsKey("iDeathHD.UnityHotReload"))
+                if (UHRInstalled)
                 {
                     //for extra wins add a build event that copies it over to the install dir !!
-                    UnityHotReloadNS.UnityHotReload.LoadNewAssemblyVersion(
-                        typeof(PenisSeekerPlugin).Assembly, 
-                        System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Info.Location), "PenisSeeker.dll"));
+                    UHRSupport.hotReload(typeof(PenisSeekerPlugin).Assembly, System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Info.Location), "PenisSeeker.dll"));
                 }
                 else
                 {
@@ -129,6 +145,6 @@ namespace PenisSeeker
                 }
             }
         }
-    }
 #endif  
+    }
 }
